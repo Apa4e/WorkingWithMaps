@@ -14,12 +14,13 @@ try:
     print("Connected", "\n")
 
     cur = conn.cursor()
-    cur.execute("SELECT Name,WKTSURFACE FROM ZONE")
+    cur.execute("SELECT * FROM ZONE")
 
     records = cur.fetchmany(ws.max_row)
+
     for row in records:
         counter = 0
-        P = shapely.wkt.loads(row[1])
+        P = shapely.wkt.loads(row[4]) #создание полигона из ячейки E[i]
         # прогон узлов на пересечение, нахождение на границах или внутри площади
         for x in range(1, ws.max_row):
             Point_X = float(ws.cell(row=x, column=2).value)
@@ -30,7 +31,9 @@ try:
                 counter += 1
                 # print("Yes")
                 # print(p1)
-        print("Количество узлов доступа в районе ", "[", row[0], "]", "-", counter)
+        #if counter == 0:
+        #    print("Район с 0 узлами", "[", row[0], "]", row[2], row[3])
+        print("Количество узлов доступа в районе ", "[", row[0], "]", "[", row[1], "]", "-", counter)
 
 except pyodbc.Error as e:
     print("Error in Connecting", e)
